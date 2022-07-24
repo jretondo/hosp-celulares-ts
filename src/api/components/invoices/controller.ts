@@ -250,18 +250,20 @@ export = (injectedStore: typeof StoreType) => {
 
     const lastInvoice = async (pvId: number, fiscal: boolean, tipo: CbteTipos, entorno: boolean): Promise<{ lastInvoice: number }> => {
         const pvData: Array<INewPV> = await ptosVtaController.get(pvId);
+
         if (fiscal) {
             let certDir = "drop_test.crt"
             let keyDir = "drop.key"
             let entornoAlt = false
-            if (process.env.ENTORNO === "PROD") {
-                certDir = pvData[0].cert_file || "drop_test.crt"
-                keyDir = pvData[0].key_file || "drop.key"
-                entornoAlt = true
-            }
+            certDir = pvData[0].cert_file || "drop_test.crt"
+            keyDir = pvData[0].key_file || "drop.key"
+            entornoAlt = true
+
 
             const afip = new AfipClass(pvData[0].cuit, certDir, keyDir, entornoAlt);
+            console.log('tipo :>> ', tipo);
             const lastfact = await afip.lastFact(pvData[0].pv, tipo);
+            console.log('lastfact :>> ', lastfact);
             if (lastfact.status === 200) {
                 return {
                     lastInvoice: Number(lastfact.data)
@@ -305,13 +307,16 @@ export = (injectedStore: typeof StoreType) => {
         let certDir = "drop_test.crt"
         let keyDir = "drop.key"
         let entornoAlt = false
-        if (process.env.ENTORNO === "PROD") {
-            certDir = pvData[0].cert_file || "drop_test.crt"
-            keyDir = pvData[0].key_file || "drop.key"
-            entornoAlt = true
-        }
+
+        certDir = pvData[0].cert_file || "drop_test.crt"
+        keyDir = pvData[0].key_file || "drop.key"
+        entornoAlt = true
+
 
         const afip = new AfipClass(pvData[0].cuit, certDir, keyDir, entornoAlt);
+        console.log('pvData[0] :>> ', pvData[0]);
+        console.log('ncbte :>> ', ncbte);
+        console.log('tipo :>> ', tipo);
         const dataInvoice = await afip.getInvoiceInfo(ncbte, pvData[0].pv, tipo);
         return dataInvoice.data
     }
