@@ -97,5 +97,8 @@ export interface INewFactura {
         tipo: MetodosPago,
         tipo_txt: string,
         importe: number
-    }>
+    }>,
+    custom: boolean,
+    total_fact: number,
+    custom_detail: string
 }

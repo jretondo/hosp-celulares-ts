@@ -193,57 +193,74 @@ export = (injectedStore: typeof StoreType) => {
         }
 
         const result = await store.insert(Tables.FACTURAS, newFact);
-        if (result.affectedRows > 0) {
-            const factId = result.insertId
-
-            const headers: Array<string> = [
-                Columns.detallesFact.fact_id,
-                Columns.detallesFact.id_prod,
-                Columns.detallesFact.nombre_prod,
-                Columns.detallesFact.cant_prod,
-                Columns.detallesFact.unidad_tipo_prod,
-                Columns.detallesFact.total_prod,
-                Columns.detallesFact.total_iva,
-                Columns.detallesFact.total_costo,
-                Columns.detallesFact.total_neto,
-                Columns.detallesFact.alicuota_id,
-                Columns.detallesFact.precio_ind
-            ]
-            const rows: Promise<Array<Array<any>>> = new Promise((resolve, reject) => {
-                const rowsvalues: Array<Array<any>> = []
-                newDetFact.map((item, key) => {
-                    const values = []
-                    values.push(factId)
-                    values.push(item.id_prod)
-                    values.push(item.nombre_prod)
-                    values.push(item.cant_prod)
-                    values.push(item.unidad_tipo_prod)
-                    values.push(item.total_prod)
-                    values.push(item.total_iva)
-                    values.push(item.total_costo)
-                    values.push(item.total_neto)
-                    values.push(item.alicuota_id)
-                    values.push(item.precio_ind)
-                    rowsvalues.push(values)
-                    if (key === newDetFact.length - 1) {
-                        resolve(rowsvalues)
+        if (newFact.custom) {
+            if (result.affectedRows > 0) {
+                const factId = result.insertId
+                return {
+                    status: 200,
+                    msg: {
+                        factId
                     }
-                })
-            })
-            const resultinsert = await store.mInsert(Tables.DET_FACTURAS, { headers: headers, rows: await rows })
-            const resultInsertStock = await ControllerStock.multipleInsertStock(newDetFact, newFact.user_id, pvId, factId)
-            return {
-                status: 200,
-                msg: {
-                    resultinsert,
-                    resultInsertStock,
-                    factId
+                }
+            } else {
+                return {
+                    status: 500,
+                    msg: "Hubo un error al querer insertar"
                 }
             }
         } else {
-            return {
-                status: 500,
-                msg: "Hubo un error al querer insertar"
+            if (result.affectedRows > 0) {
+                const factId = result.insertId
+
+                const headers: Array<string> = [
+                    Columns.detallesFact.fact_id,
+                    Columns.detallesFact.id_prod,
+                    Columns.detallesFact.nombre_prod,
+                    Columns.detallesFact.cant_prod,
+                    Columns.detallesFact.unidad_tipo_prod,
+                    Columns.detallesFact.total_prod,
+                    Columns.detallesFact.total_iva,
+                    Columns.detallesFact.total_costo,
+                    Columns.detallesFact.total_neto,
+                    Columns.detallesFact.alicuota_id,
+                    Columns.detallesFact.precio_ind
+                ]
+                const rows: Promise<Array<Array<any>>> = new Promise((resolve, reject) => {
+                    const rowsvalues: Array<Array<any>> = []
+                    newDetFact.map((item, key) => {
+                        const values = []
+                        values.push(factId)
+                        values.push(item.id_prod)
+                        values.push(item.nombre_prod)
+                        values.push(item.cant_prod)
+                        values.push(item.unidad_tipo_prod)
+                        values.push(item.total_prod)
+                        values.push(item.total_iva)
+                        values.push(item.total_costo)
+                        values.push(item.total_neto)
+                        values.push(item.alicuota_id)
+                        values.push(item.precio_ind)
+                        rowsvalues.push(values)
+                        if (key === newDetFact.length - 1) {
+                            resolve(rowsvalues)
+                        }
+                    })
+                })
+                const resultinsert = await store.mInsert(Tables.DET_FACTURAS, { headers: headers, rows: await rows })
+                const resultInsertStock = await ControllerStock.multipleInsertStock(newDetFact, newFact.user_id, pvId, factId)
+                return {
+                    status: 200,
+                    msg: {
+                        resultinsert,
+                        resultInsertStock,
+                        factId
+                    }
+                }
+            } else {
+                return {
+                    status: 500,
+                    msg: "Hubo un error al querer insertar"
+                }
             }
         }
     }

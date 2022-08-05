@@ -28,7 +28,8 @@ const factuMiddel = () => {
             const user: IUser = req.body.user
             const pvId = body.pv_id;
             const pvData: Array<INewPV> = await ptosVtaController.get(pvId);
-            const productsList: IfactCalc = await calcProdLista(body.lista_prod);
+
+
             const fiscalBool = req.body.fiscal
             const variosPagos = body.variosPagos
             if (parseInt(fiscalBool) === 0) {
@@ -72,89 +73,180 @@ const factuMiddel = () => {
                 letra = "X"
             }
 
-            if (body.t_fact === 6 && productsList.totalFact < 10000 && body.cliente_tdoc === 99) {
-                body.cliente_ndoc = 0
-            }
-
-            const descuento: number = body.descuentoPerc
-            let descuentoNumber: number = 0
-            let descuentoPer = 0
-
-            if (descuento > 0) {
-                descuentoNumber = Math.round(((productsList.totalFact * (descuento / 100)) * 100)) / 100
-                descuentoPer = descuento
-                productsList.totalFact = (productsList.totalFact) - (productsList.totalFact * (descuento / 100))
-                productsList.totalIva = (productsList.totalIva) - (productsList.totalIva * (descuento / 100))
-                productsList.totalNeto = (productsList.totalNeto) - (productsList.totalNeto * (descuento / 100))
-            }
-
-            const newFact: IFactura = {
-                fecha: body.fecha,
-                pv: pvData[0].pv,
-                cbte: 0,
-                letra: letra,
-                t_fact: body.t_fact,
-                cuit_origen: pvData[0].cuit,
-                iibb_origen: pvData[0].iibb,
-                ini_act_origen: pvData[0].ini_act,
-                direccion_origen: pvData[0].direccion,
-                raz_soc_origen: pvData[0].raz_soc,
-                cond_iva_origen: pvData[0].cond_iva,
-                tipo_doc_cliente: body.cliente_tdoc || 99,
-                n_doc_cliente: Number(body.cliente_tdoc) === 99 ? 0 : body.cliente_ndoc || 0,
-                cond_iva_cliente: body.cond_iva,
-                email_cliente: body.cliente_email || "",
-                nota_cred: false,
-                fiscal: body.fiscal,
-                raz_soc_cliente: body.cliente_name || "",
-                user_id: user.id || 0,
-                seller_name: `${user.nombre} ${user.apellido}`,
-                total_fact: (Math.round((productsList.totalFact) * 100)) / 100,
-                total_iva: pvData[0].cond_iva === 1 ? (Math.round((productsList.totalIva) * 100)) / 100 : 0,
-                total_neto: pvData[0].cond_iva === 1 ? (Math.round((productsList.totalNeto) * 100)) / 100 : (Math.round((productsList.totalFact) * 100)) / 100,
-                total_compra: (Math.round((productsList.totalCosto) * 100)) / 100,
-                forma_pago: body.forma_pago,
-                pv_id: body.pv_id,
-                id_fact_asoc: 0,
-                descuento: descuentoNumber
-            }
-
-            let ivaList: Array<IIvaItem> = [];
-            let dataFiscal:
-                FactInscriptoProd |
-                FactInscriptoServ |
-                FactMonotribProd |
-                FactMonotribServ |
-                any = {}
-
-            if (body.fiscal) {
-                ivaList = await listaIva(productsList.listaProd, descuentoPer);
-                console.log('ivaList :>> ', ivaList);
-                dataFiscal = {
-                    CantReg: 1,
-                    PtoVta: pvData[0].pv,
-                    CbteTipo: body.t_fact,
-                    DocTipo: cliente.cliente_tdoc || 99,
-                    DocNro: Number(cliente.cliente_tdoc) === 99 ? 0 : cliente.cliente_ndoc || 0,
-                    CbteFch: moment(body.fecha, "YYYY-MM-DD").format("YYYYMMDD"),
-                    ImpTotal: (Math.round((productsList.totalFact) * 100)) / 100,
-                    MonCotiz: 1,
-                    MonId: "PES",
-                    Concepto: Conceptos.Productos,
-                    ImpTotConc: 0,
-                    ImpNeto: pvData[0].cond_iva === 1 ? (Math.round((productsList.totalNeto) * 100)) / 100 : (Math.round((productsList.totalFact) * 100)) / 100,
-                    ImpOpEx: 0,
-                    ImpIVA: pvData[0].cond_iva === 1 ? (Math.round((productsList.totalIva) * 100)) / 100 : 0,
-                    ImpTrib: 0,
-                    Iva: pvData[0].cond_iva === 1 ? ivaList : null
+            if (body.custom) {
+                if (body.t_fact === 6 && body.cliente_tdoc === 99) {
+                    body.cliente_ndoc = 0
                 }
+                let ivaTotal = 0
+                let netoTotal = 0
+
+                if (pvData[0].cond_iva === 1) {
+                    netoTotal = body.total_fact / 1.21
+                    ivaTotal = body.total_fact - netoTotal
+                }
+
+                const newFact: IFactura = {
+                    fecha: body.fecha,
+                    pv: pvData[0].pv,
+                    cbte: 0,
+                    letra: letra,
+                    t_fact: body.t_fact,
+                    cuit_origen: pvData[0].cuit,
+                    iibb_origen: pvData[0].iibb,
+                    ini_act_origen: pvData[0].ini_act,
+                    direccion_origen: pvData[0].direccion,
+                    raz_soc_origen: pvData[0].raz_soc,
+                    cond_iva_origen: pvData[0].cond_iva,
+                    tipo_doc_cliente: body.cliente_tdoc || 99,
+                    n_doc_cliente: Number(body.cliente_tdoc) === 99 ? 0 : body.cliente_ndoc || 0,
+                    cond_iva_cliente: body.cond_iva,
+                    email_cliente: body.cliente_email || "",
+                    nota_cred: false,
+                    fiscal: body.fiscal,
+                    raz_soc_cliente: body.cliente_name || "",
+                    user_id: user.id || 0,
+                    seller_name: `${user.nombre} ${user.apellido}`,
+                    total_fact: body.total_fact,
+                    total_iva: pvData[0].cond_iva === 1 ? (Math.round((ivaTotal) * 100) / 100) : 0,
+                    total_neto: pvData[0].cond_iva === 1 ? (Math.round((netoTotal) * 100)) / 100 : (Math.round((body.total_fact) * 100)) / 100,
+                    total_compra: 0,
+                    forma_pago: body.forma_pago,
+                    pv_id: body.pv_id,
+                    id_fact_asoc: 0,
+                    descuento: 0,
+                    custom: true,
+                    custom_detail: body.custom_detail
+                }
+                let dataFiscal:
+                    FactInscriptoProd |
+                    FactInscriptoServ |
+                    FactMonotribProd |
+                    FactMonotribServ |
+                    any = {}
+
+                if (body.fiscal) {
+
+                    dataFiscal = {
+                        CantReg: 1,
+                        PtoVta: pvData[0].pv,
+                        CbteTipo: body.t_fact,
+                        DocTipo: cliente.cliente_tdoc || 99,
+                        DocNro: Number(cliente.cliente_tdoc) === 99 ? 0 : cliente.cliente_ndoc || 0,
+                        CbteFch: moment(body.fecha, "YYYY-MM-DD").format("YYYYMMDD"),
+                        ImpTotal: (Math.round((body.total_fact) * 100)) / 100,
+                        MonCotiz: 1,
+                        MonId: "PES",
+                        Concepto: Conceptos.Productos,
+                        ImpTotConc: 0,
+                        ImpNeto: pvData[0].cond_iva === 1 ? (Math.round((netoTotal) * 100)) / 100 : (Math.round((body.total_fact) * 100)) / 100,
+                        ImpOpEx: 0,
+                        ImpIVA: pvData[0].cond_iva === 1 ? (Math.round((ivaTotal) * 100)) / 100 : 0,
+                        ImpTrib: 0,
+                        Iva: pvData[0].cond_iva === 1 ? {
+                            Id: 5,
+                            BaseImp: (Math.round((netoTotal) * 100)) / 100,
+                            Importe: (Math.round((ivaTotal) * 100)) / 100
+                        } : null
+                    }
+                }
+
+                req.body.newFact = newFact
+                req.body.dataFiscal = dataFiscal
+                req.body.pvData = pvData[0]
+                req.body.productsList = []
+                req.body.variosPagos = variosPagos
+                next();
+            } else {
+
+                const productsList: IfactCalc = await calcProdLista(body.lista_prod);
+
+                if (body.t_fact === 6 && productsList.totalFact < 10000 && body.cliente_tdoc === 99) {
+                    body.cliente_ndoc = 0
+                }
+
+                const descuento: number = body.descuentoPerc
+                let descuentoNumber: number = 0
+                let descuentoPer = 0
+
+                if (descuento > 0) {
+                    descuentoNumber = Math.round(((productsList.totalFact * (descuento / 100)) * 100)) / 100
+                    descuentoPer = descuento
+                    productsList.totalFact = (productsList.totalFact) - (productsList.totalFact * (descuento / 100))
+                    productsList.totalIva = (productsList.totalIva) - (productsList.totalIva * (descuento / 100))
+                    productsList.totalNeto = (productsList.totalNeto) - (productsList.totalNeto * (descuento / 100))
+                }
+
+                const newFact: IFactura = {
+                    fecha: body.fecha,
+                    pv: pvData[0].pv,
+                    cbte: 0,
+                    letra: letra,
+                    t_fact: body.t_fact,
+                    cuit_origen: pvData[0].cuit,
+                    iibb_origen: pvData[0].iibb,
+                    ini_act_origen: pvData[0].ini_act,
+                    direccion_origen: pvData[0].direccion,
+                    raz_soc_origen: pvData[0].raz_soc,
+                    cond_iva_origen: pvData[0].cond_iva,
+                    tipo_doc_cliente: body.cliente_tdoc || 99,
+                    n_doc_cliente: Number(body.cliente_tdoc) === 99 ? 0 : body.cliente_ndoc || 0,
+                    cond_iva_cliente: body.cond_iva,
+                    email_cliente: body.cliente_email || "",
+                    nota_cred: false,
+                    fiscal: body.fiscal,
+                    raz_soc_cliente: body.cliente_name || "",
+                    user_id: user.id || 0,
+                    seller_name: `${user.nombre} ${user.apellido}`,
+                    total_fact: (Math.round((productsList.totalFact) * 100)) / 100,
+                    total_iva: pvData[0].cond_iva === 1 ? (Math.round((productsList.totalIva) * 100)) / 100 : 0,
+                    total_neto: pvData[0].cond_iva === 1 ? (Math.round((productsList.totalNeto) * 100)) / 100 : (Math.round((productsList.totalFact) * 100)) / 100,
+                    total_compra: (Math.round((productsList.totalCosto) * 100)) / 100,
+                    forma_pago: body.forma_pago,
+                    pv_id: body.pv_id,
+                    id_fact_asoc: 0,
+                    descuento: descuentoNumber,
+                    custom: false,
+                    custom_detail: ""
+                }
+
+                let ivaList: Array<IIvaItem> = [];
+                let dataFiscal:
+                    FactInscriptoProd |
+                    FactInscriptoServ |
+                    FactMonotribProd |
+                    FactMonotribServ |
+                    any = {}
+
+                if (body.fiscal) {
+                    ivaList = await listaIva(productsList.listaProd, descuentoPer);
+                    console.log('ivaList :>> ', ivaList);
+                    dataFiscal = {
+                        CantReg: 1,
+                        PtoVta: pvData[0].pv,
+                        CbteTipo: body.t_fact,
+                        DocTipo: cliente.cliente_tdoc || 99,
+                        DocNro: Number(cliente.cliente_tdoc) === 99 ? 0 : cliente.cliente_ndoc || 0,
+                        CbteFch: moment(body.fecha, "YYYY-MM-DD").format("YYYYMMDD"),
+                        ImpTotal: (Math.round((productsList.totalFact) * 100)) / 100,
+                        MonCotiz: 1,
+                        MonId: "PES",
+                        Concepto: Conceptos.Productos,
+                        ImpTotConc: 0,
+                        ImpNeto: pvData[0].cond_iva === 1 ? (Math.round((productsList.totalNeto) * 100)) / 100 : (Math.round((productsList.totalFact) * 100)) / 100,
+                        ImpOpEx: 0,
+                        ImpIVA: pvData[0].cond_iva === 1 ? (Math.round((productsList.totalIva) * 100)) / 100 : 0,
+                        ImpTrib: 0,
+                        Iva: pvData[0].cond_iva === 1 ? ivaList : null
+                    }
+                }
+                req.body.newFact = newFact
+                req.body.dataFiscal = dataFiscal
+                req.body.pvData = pvData[0]
+                req.body.productsList = productsList.listaProd
+                req.body.variosPagos = variosPagos
+                next();
             }
-            req.body.newFact = newFact
-            req.body.dataFiscal = dataFiscal
-            req.body.pvData = pvData[0]
-            req.body.productsList = productsList.listaProd
-            req.body.variosPagos = variosPagos
-            next();
+
         } catch (error) {
             console.error(error)
             next(errorSend("Faltan datos o hay datos erroneos, controlelo!"))

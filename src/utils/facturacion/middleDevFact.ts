@@ -76,7 +76,9 @@ const devFactMiddle = () => {
             forma_pago: dataFact[0].forma_pago,
             pv_id: dataFact[0].pv_id,
             id_fact_asoc: dataFact[0].id || 0,
-            descuento: dataFact[0].descuento
+            descuento: dataFact[0].descuento,
+            custom: dataFact[0].custom,
+            custom_detail: dataFact[0].custom_detail
         }
         let newDet: Array<IDetFactura> = []
 
@@ -124,7 +126,11 @@ const devFactMiddle = () => {
                 ImpOpEx: 0,
                 ImpIVA: - newFact.total_iva,
                 ImpTrib: 0,
-                Iva: newFact.total_iva === 0 ? null : ivaList,
+                Iva: dataFact[0].custom ? {
+                    Id: 5,
+                    BaseImp: dataFact[0].total_neto,
+                    Importe: dataFact[0].total_iva
+                } : newFact.total_iva === 0 ? null : ivaList,
                 CbtesAsoc: [{
                     Tipo: dataFact[0].t_fact,
                     PtoVta: dataFact[0].pv,

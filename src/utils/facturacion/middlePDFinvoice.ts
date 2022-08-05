@@ -203,6 +203,8 @@ export const invoicePDFMiddle = () => {
                 cbteAsoc,
                 formaPago,
                 variosPagos,
+                custom_detail: newFact.custom_detail,
+                custom: newFact.custom,
                 ...encabezado,
                 ...ptoVta,
                 ...cliente,
