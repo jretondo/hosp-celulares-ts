@@ -41,6 +41,22 @@ const devFactMiddle = () => {
                     tipoNC = 53
                     letra = "NC M"
                     break;
+                case 3:
+                    tipoNC = 2
+                    letra = "ND A"
+                    break;
+                case 8:
+                    tipoNC = 7
+                    letra = "ND B"
+                    break;
+                case 13:
+                    tipoNC = 12
+                    letra = "ND C"
+                    break;
+                case 53:
+                    tipoNC = 52
+                    letra = "ND M"
+                    break;
                 default:
                     tipoNC = 0
                     letra = "DEV"
@@ -117,19 +133,19 @@ const devFactMiddle = () => {
                 DocTipo: newFact.tipo_doc_cliente,
                 DocNro: newFact.n_doc_cliente,
                 CbteFch: moment(newFact.fecha, "YYYY-MM-DD").format("YYYYMMDD"),
-                ImpTotal: - newFact.total_fact,
+                ImpTotal: newFact.total_fact < 0 ? - newFact.total_fact : newFact.total_fact,
                 MonCotiz: 1,
                 MonId: "PES",
                 Concepto: Conceptos.Productos,
                 ImpTotConc: 0,
-                ImpNeto: - newFact.total_neto,
+                ImpNeto: newFact.total_neto < 0 ? - newFact.total_neto : newFact.total_neto,
                 ImpOpEx: 0,
-                ImpIVA: - newFact.total_iva,
+                ImpIVA: newFact.total_iva < 0 ? -newFact.total_iva : newFact.total_iva,
                 ImpTrib: 0,
                 Iva: dataFact[0].custom ? {
                     Id: 5,
-                    BaseImp: dataFact[0].total_neto,
-                    Importe: dataFact[0].total_iva
+                    BaseImp: dataFact[0].total_neto < 0 ? -dataFact[0].total_neto : dataFact[0].total_neto,
+                    Importe: dataFact[0].total_iva < 0 ? -dataFact[0].total_iva : dataFact[0].total_iva
                 } : newFact.total_iva === 0 ? null : ivaList,
                 CbtesAsoc: [{
                     Tipo: dataFact[0].t_fact,

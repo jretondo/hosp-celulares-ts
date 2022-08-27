@@ -79,9 +79,35 @@ const factuMiddel = () => {
                 }
                 let ivaTotal = 0
                 let netoTotal = 0
+                let iva = 0
+
+                switch (body.alicuota) {
+                    case 3:
+                        iva = 0
+                        break;
+                    case 4:
+                        iva = 0.105
+                        break;
+                    case 5:
+                        iva = 0.21
+                        break;
+                    case 6:
+                        iva = 0.27
+                        break;
+                    case 8:
+                        iva = 0.05
+                        break;
+                    case 9:
+                        iva = 0.025
+                        break;
+                    default:
+                        break;
+                }
+
+                iva = iva + 1
 
                 if (pvData[0].cond_iva === 1) {
-                    netoTotal = body.total_fact / 1.21
+                    netoTotal = body.total_fact / iva
                     ivaTotal = body.total_fact - netoTotal
                 }
 
@@ -143,7 +169,7 @@ const factuMiddel = () => {
                         ImpIVA: pvData[0].cond_iva === 1 ? (Math.round((ivaTotal) * 100)) / 100 : 0,
                         ImpTrib: 0,
                         Iva: pvData[0].cond_iva === 1 ? {
-                            Id: 5,
+                            Id: body.alicuota,
                             BaseImp: (Math.round((netoTotal) * 100)) / 100,
                             Importe: (Math.round((ivaTotal) * 100)) / 100
                         } : null

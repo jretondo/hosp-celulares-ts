@@ -276,7 +276,8 @@ export = (injectedStore: typeof StoreType) => {
             keyDir = pvData[0].key_file || "drop.key"
             entornoAlt = true
 
-
+            console.log('certDir :>> ', certDir);
+            console.log('pvData[0].cuit :>> ', pvData[0].cuit);
             const afip = new AfipClass(pvData[0].cuit, certDir, keyDir, entornoAlt);
             console.log('tipo :>> ', tipo);
             const lastfact = await afip.lastFact(pvData[0].pv, tipo);

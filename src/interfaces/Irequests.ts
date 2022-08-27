@@ -101,4 +101,5 @@ export interface INewFactura {
     custom: boolean,
     total_fact: number,
     custom_detail: string
+    alicuota?: number
 }
