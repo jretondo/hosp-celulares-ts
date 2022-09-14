@@ -26,6 +26,7 @@ export const invoicePDFMiddle = () => {
             const newFact: IFactura = req.body.newFact
             const productsList: Array<IDetFactura> = req.body.productsList
             const variosPagos = req.body.variosPagos
+
             const dataFiscal:
                 FactInscriptoProd |
                 FactInscriptoServ |

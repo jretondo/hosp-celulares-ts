@@ -86,7 +86,7 @@ const devFactMiddle = () => {
             user_id: user.id || 0,
             seller_name: `${user.nombre} ${user.apellido}`,
             total_fact: - dataFact[0].total_fact,
-            total_iva: - dataFact[0].total_iva,
+            total_iva: dataFact[0].total_iva > 0 ? - dataFact[0].total_iva : 0,
             total_neto: - dataFact[0].total_neto,
             total_compra: - dataFact[0].total_compra,
             forma_pago: dataFact[0].forma_pago,
@@ -126,6 +126,7 @@ const devFactMiddle = () => {
             const descuentoPer = ((dataFact[0].descuento / (dataFact[0].total_fact + dataFact[0].descuento)) * 100)
 
             ivaList = await listaIva(detFact, descuentoPer);
+
             dataFiscal = {
                 CantReg: 1,
                 PtoVta: dataFact[0].pv,
@@ -142,11 +143,11 @@ const devFactMiddle = () => {
                 ImpOpEx: 0,
                 ImpIVA: newFact.total_iva < 0 ? -newFact.total_iva : newFact.total_iva,
                 ImpTrib: 0,
-                Iva: dataFact[0].custom ? {
+                Iva: newFact.total_iva === 0 ? null : dataFact[0].custom ? {
                     Id: 5,
                     BaseImp: dataFact[0].total_neto < 0 ? -dataFact[0].total_neto : dataFact[0].total_neto,
                     Importe: dataFact[0].total_iva < 0 ? -dataFact[0].total_iva : dataFact[0].total_iva
-                } : newFact.total_iva === 0 ? null : ivaList,
+                } : ivaList,
                 CbtesAsoc: [{
                     Tipo: dataFact[0].t_fact,
                     PtoVta: dataFact[0].pv,

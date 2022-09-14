@@ -245,7 +245,6 @@ const factuMiddel = () => {
 
                 if (body.fiscal) {
                     ivaList = await listaIva(productsList.listaProd, descuentoPer);
-                    console.log('ivaList :>> ', ivaList);
                     dataFiscal = {
                         CantReg: 1,
                         PtoVta: pvData[0].pv,

@@ -276,12 +276,8 @@ export = (injectedStore: typeof StoreType) => {
             keyDir = pvData[0].key_file || "drop.key"
             entornoAlt = true
 
-            console.log('certDir :>> ', certDir);
-            console.log('pvData[0].cuit :>> ', pvData[0].cuit);
             const afip = new AfipClass(pvData[0].cuit, certDir, keyDir, entornoAlt);
-            console.log('tipo :>> ', tipo);
             const lastfact = await afip.lastFact(pvData[0].pv, tipo);
-            console.log('lastfact :>> ', lastfact);
             if (lastfact.status === 200) {
                 return {
                     lastInvoice: Number(lastfact.data)
@@ -332,9 +328,7 @@ export = (injectedStore: typeof StoreType) => {
 
 
         const afip = new AfipClass(pvData[0].cuit, certDir, keyDir, entornoAlt);
-        console.log('pvData[0] :>> ', pvData[0]);
-        console.log('ncbte :>> ', ncbte);
-        console.log('tipo :>> ', tipo);
+
         const dataInvoice = await afip.getInvoiceInfo(ncbte, pvData[0].pv, tipo);
         return dataInvoice.data
     }
@@ -391,7 +385,7 @@ export = (injectedStore: typeof StoreType) => {
         await newmovCtaCte(newFact.forma_pago, newFact.total_fact, newFact.n_doc_cliente, resultInsert.msg.factId)
 
         if (Number(newFact.forma_pago) === 5) {
-            variosPagos.map(async item => {
+            !variosPagos ? null : variosPagos.map(async item => {
                 const dataForma: IFormasPago = {
                     id_fact: resultInsert.msg.factId,
                     tipo: item.tipo,
@@ -530,7 +524,6 @@ export = (injectedStore: typeof StoreType) => {
             const idFact = item.id_fact_asoc
 
             await store.update(Tables.FACTURAS, { id_fact_asoc: idNC }, idFact)
-            console.log('idFact :>> ', idFact);
         })
 
         return {

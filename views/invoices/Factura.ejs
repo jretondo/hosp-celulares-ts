@@ -94,7 +94,7 @@
                   <% }else{ %>
                     <% if(parseInt(formaPago.code)===5){ %>
                       <div class="to">Forma de Pago:</div>
-                      <% variosPagos.forEach(function(item){ %>
+                      <% !variosPagos? null : variosPagos.forEach(function(item){ %>
                         <h2 class="name">
                           <%- item.tipo_txt %>: $ <%- item.importe %>
                         </h2>
