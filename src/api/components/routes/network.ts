@@ -17,5 +17,8 @@ router.get("/dashboard", secure(), responseSuccess)
     .get("/ptosVta", secure(EPermissions.ptosVta), responseSuccess)
     .get("/stock", secure(EPermissions.ventas), responseSuccess)
     .get("/userAdmin", secure(EPermissions.userAdmin), responseSuccess)
+    .get("/franquicias", secure(EPermissions.franquicias), responseSuccess)
+    .get("/reparaciones", secure(EPermissions.reparaciones), responseSuccess)
+    .get("/repuestos", secure(EPermissions.repuestos), responseSuccess)
 
 export = router;

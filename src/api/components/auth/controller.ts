@@ -1,10 +1,12 @@
+import { error } from './../../../network/response';
 import { Tables } from '../../../enums/EtablesDB';
 import StoreType from '../../../store/mysql';
 import bcrypt from 'bcrypt';
 import { passCreator } from '../../../utils/passCreator';
 import { sendPass } from '../../../utils/sendEmails/sendPass';
 import auth from '../../../auth';
-import { Iauth } from 'interfaces/Itables';
+import { Iauth, IFranchise, IUser } from 'interfaces/Itables';
+import { franchiseSendPass } from '../../../utils/sendEmails/sendPassFranchise';
 
 export = (injectedStore: typeof StoreType) => {
     let store = injectedStore;
@@ -45,10 +47,8 @@ export = (injectedStore: typeof StoreType) => {
     }
 
     const recPass = async (email: string) => {
-        console.log('email', email);
         const newPass = await passCreator();
         const userData = await store.query(Tables.ADMIN, { email: email });
-        console.log('userData', userData);
         const idUsu = userData[0].id;
         const usuario = userData[0].usuario;
         const data: Iauth = {
@@ -69,6 +69,7 @@ export = (injectedStore: typeof StoreType) => {
             ...data2[0],
             ...data3[0]
         }
+
         const prov = data.prov
         return bcrypt.compare(password, data.pass)
             .then(same => {
@@ -84,9 +85,52 @@ export = (injectedStore: typeof StoreType) => {
             })
     }
 
+    const FranchisesLogin = async (username: string, password: string) => {
+        const data: Array<IFranchise> = await store.query(Tables.FRANCHISE, { f_user: username })
+
+        const prov = data[0].provisory_pass
+        return bcrypt.compare(password, data[0].pass || "")
+            .then(same => {
+                if (same) {
+                    return {
+                        token: auth.sign(JSON.stringify(data)),
+                        userData: data[0],
+                        provisory: prov
+                    }
+                } else {
+                    throw new Error('información invalida')
+                }
+            })
+    }
+
+    const FranchiseChangePass = async (user: Array<IUser>, newPass: string) => {
+
+        return await store.update(Tables.FRANCHISE, { pass: await bcrypt.hash(newPass, 5), provisory_pass: 0 }, user[0].id || 0);
+    }
+
+    const franchiseRecPass = async (email: string) => {
+        const newPass = await passCreator();
+        const franchiseData: Array<IFranchise> = await store.query(Tables.FRANCHISE, { email: email });
+        const idFranchise = franchiseData[0].id;
+
+        const result = await store.update(Tables.FRANCHISE, { pass: await bcrypt.hash(newPass, 5), provisory_pass: 1 }, idFranchise || 0);
+
+        if (result.affectedRows > 0) {
+            const franchiseData: Array<IFranchise> = await store.get(Tables.FRANCHISE, idFranchise || 0);
+
+            return await franchiseSendPass(franchiseData[0].f_user, newPass, franchiseData[0].email, "Nueva contraseña", false, false, franchiseData[0].name || "");
+        } else {
+            throw error
+        }
+    }
+
+
     return {
         upsert,
         login,
-        recPass
+        recPass,
+        FranchisesLogin,
+        FranchiseChangePass,
+        franchiseRecPass
     }
 }

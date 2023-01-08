@@ -142,3 +142,28 @@ export interface IFormasPago {
     importe: number,
     tipo_txt: string
 }
+
+export interface IFranchise {
+    id?: number,
+    f_user: string,
+    pass?: string,
+    email: string,
+    name: string,
+    obs: string,
+    phone: string,
+    direction: string,
+    provisory_pass?: boolean
+}
+
+export interface IRepairs {
+    id?: number,
+    date: Date,
+    detail: string,
+    client_id: number,
+    part_cost: number,
+    service_cost: number,
+    final_price: number,
+    hpc_cost: number,
+    state: number,
+    franchise_id: number
+}

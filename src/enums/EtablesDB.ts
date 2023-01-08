@@ -185,6 +185,38 @@ enum FormasPago {
     importe = "importe"
 }
 
+enum Franchise {
+    id = "id",
+    f_user = "f_user",
+    pass = "pass",
+    email = "email",
+    name = "name",
+    direction = "direction",
+    obs = "obs",
+    phone = "phone",
+    provisory_pass = "provisory_pass "
+}
+
+enum Repairs {
+    id = "id",
+    date = "date",
+    detail = "detail",
+    client_id = "client_id",
+    part_cost = "part_cost",
+    service_cost = "service_cost",
+    final_price = "final_price",
+    hpc_cost = "hpc_cost",
+    state = "state",
+    franchise_id = "franchise_id"
+}
+
+enum PaymentsRepairs {
+    id = "id",
+    date = "date",
+    detail = "detail",
+    repair_id = "repair_id"
+}
+
 export enum MetodosPago {
     efectivo = 0,
     mercaPago = 1,
@@ -209,7 +241,10 @@ export enum Tables {
     FACTURAS = "facturas",
     DET_FACTURAS = "detalle_fact",
     CTA_CTE = "cta_cte",
-    FORMAS_PAGO = "formas_pago"
+    FORMAS_PAGO = "formas_pago",
+    FRANCHISE = "franchise",
+    REPAIRS = "repairs",
+    PAYMENTS_REPAIRS = "payments_repairs"
 }
 
 export const Columns = {
@@ -227,5 +262,8 @@ export const Columns = {
     facturas: Facturas,
     detallesFact: DetalleFact,
     ctaCte: CtaCte,
-    formasPago: FormasPago
+    formasPago: FormasPago,
+    franchise: Franchise,
+    repairs: Repairs,
+    paymentsRepairs: PaymentsRepairs
 }
