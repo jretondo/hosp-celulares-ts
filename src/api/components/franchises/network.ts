@@ -10,7 +10,7 @@ const list = (
     res: Response,
     next: NextFunction
 ) => {
-    Controller.list(String(req.query.query))
+    Controller.list(String(req.query.query), Boolean(req.query.limit))
         .then((lista: any) => {
             success({
                 req,
@@ -77,9 +77,22 @@ const resetPass = (
         .catch(next)
 }
 
+const changeObs = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    Controller.changeObs(Number(req.body.id), String(req.body.newObs))
+        .then((data) => {
+            success({ req, res, message: data })
+        })
+        .catch(next)
+}
+
 router
     .get("/details/:id", secure(EPermissions.franquicias), get)
     .put("/pass/:id", secure(EPermissions.franquicias), resetPass)
+    .put("/obs", secure(EPermissions.franquicias), changeObs)
     .delete("/:id", secure(EPermissions.franquicias), remove)
     .get("/", secure(EPermissions.franquicias), list)
     .post("/", secure(EPermissions.franquicias), upsert)

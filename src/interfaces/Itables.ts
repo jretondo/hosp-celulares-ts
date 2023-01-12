@@ -157,13 +157,14 @@ export interface IFranchise {
 
 export interface IRepairs {
     id?: number,
-    date: Date,
+    date?: Date,
     detail: string,
-    client_id: number,
+    client: string,
     part_cost: number,
     service_cost: number,
     final_price: number,
     hpc_cost: number,
     state: number,
-    franchise_id: number
+    franchise_id: number,
+    user_reg: number
 }

@@ -2,18 +2,17 @@ import { error } from './../../../network/response';
 import { franchiseSendPass } from './../../../utils/sendEmails/sendPassFranchise';
 import { passCreator } from './../../../utils/passCreator';
 import { IFranchise } from './../../../interfaces/Itables';
-import { IWhereParams } from 'interfaces/Ifunctions';
+import { IWhereParams, Ipages } from 'interfaces/Ifunctions';
 import bcrypt from 'bcrypt';
-import { EConcatWhere, EModeWhere, ESelectFunct } from '../../../enums/EfunctMysql';
+import { EConcatWhere, EModeWhere } from '../../../enums/EfunctMysql';
 import { Tables, Columns } from '../../../enums/EtablesDB';
 import StoreType from '../../../store/mysql';
 import { NextFunction } from 'express';
-import { sendPass } from 'utils/sendEmails/sendPass';
 
 export = (injectedStore: typeof StoreType) => {
     let store = injectedStore;
 
-    const list = async (item?: string) => {
+    const list = async (item?: string, limit?: boolean) => {
         let filter: IWhereParams | undefined = undefined;
         let filters: Array<IWhereParams> = [];
         if (item) {
@@ -31,7 +30,14 @@ export = (injectedStore: typeof StoreType) => {
             filters.push(filter);
         }
 
-        const data = await store.list(Tables.FRANCHISE, [Columns.franchise.id, Columns.franchise.name, Columns.franchise.email, Columns.franchise.f_user, Columns.franchise.obs, Columns.franchise.phone, Columns.franchise.direction], filters, undefined, undefined);
+        const pages: Ipages = {
+            currentPage: 1,
+            cantPerPage: 5,
+            order: Columns.franchise.name,
+            asc: true
+        };
+
+        const data = await store.list(Tables.FRANCHISE, [Columns.franchise.id, Columns.franchise.name, Columns.franchise.email, Columns.franchise.f_user, Columns.franchise.obs, Columns.franchise.phone, Columns.franchise.direction], filters, undefined, limit ? pages : undefined);
         return {
             data
         };
@@ -101,11 +107,16 @@ export = (injectedStore: typeof StoreType) => {
         }
     }
 
+    const changeObs = async (idFranchise: number, newObs: string) => {
+        return await store.update(Tables.FRANCHISE, { obs: newObs }, idFranchise);
+    }
+
     return {
         list,
         upsert,
         remove,
         get,
-        resetPass
+        resetPass,
+        changeObs
     }
 }

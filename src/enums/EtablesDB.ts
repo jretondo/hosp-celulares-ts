@@ -201,13 +201,14 @@ enum Repairs {
     id = "id",
     date = "date",
     detail = "detail",
-    client_id = "client_id",
+    client = "client",
     part_cost = "part_cost",
     service_cost = "service_cost",
     final_price = "final_price",
     hpc_cost = "hpc_cost",
     state = "state",
-    franchise_id = "franchise_id"
+    franchise_id = "franchise_id",
+    user_reg = "user_reg"
 }
 
 enum PaymentsRepairs {
