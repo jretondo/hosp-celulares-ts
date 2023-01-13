@@ -92,13 +92,30 @@ const get = (
         .catch(next)
 }
 
+const customUpdate = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    Controller.customUpdate(
+        req.body.update,
+        req.body.id,
+        next
+    )
+        .then((data) => {
+            success({ req, res, message: data })
+        })
+        .catch(next)
+}
+
 
 router
-    .get("/details/:id", secure(EPermissions.clientes), get)
-    .get("/:page", secure(EPermissions.clientes), listPagination)
-    .delete("/:id", secure(EPermissions.clientes), remove)
-    .get("/", secure(EPermissions.clientes), list)
-    .post("/", secure(EPermissions.clientes), upsert)
-    .put("/", secure(EPermissions.clientes), upsert)
+    .get("/details/:id", secure(EPermissions.reparaciones), get)
+    .get("/:page", secure(EPermissions.reparaciones), listPagination)
+    .delete("/:id", secure(EPermissions.reparaciones), remove)
+    .patch("/", secure(EPermissions.reparaciones), customUpdate)
+    .get("/", secure(EPermissions.reparaciones), list)
+    .post("/", secure(EPermissions.reparaciones), upsert)
+    .put("/", secure(EPermissions.reparaciones), upsert)
 
 export = router;

@@ -14,7 +14,7 @@ const list = (
 ) => {
     Controller.list(
         Number(req.params.page),
-        req.body.query,
+        String(req.query.query),
         Number(req.query.cantPerPage)
     )
         .then((lista: any) => {

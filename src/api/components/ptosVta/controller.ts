@@ -13,6 +13,7 @@ export = (injectedStore: typeof StoreType) => {
     let store = injectedStore;
 
     const list = async (page?: number, item?: string, cantPerPage?: number) => {
+        console.log('item :>> ', item);
         let filter: IWhereParams | undefined = undefined;
         let filters: Array<IWhereParams> = [];
         if (item) {

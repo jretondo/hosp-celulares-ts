@@ -207,8 +207,9 @@ enum Repairs {
     final_price = "final_price",
     hpc_cost = "hpc_cost",
     state = "state",
-    franchise_id = "franchise_id",
-    user_reg = "user_reg"
+    pv_id = "pv_id",
+    user_reg = "user_reg",
+    difference = "difference"
 }
 
 enum PaymentsRepairs {

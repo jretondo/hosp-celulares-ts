@@ -165,6 +165,7 @@ export interface IRepairs {
     final_price: number,
     hpc_cost: number,
     state: number,
-    franchise_id: number,
-    user_reg: number
+    pv_id: number,
+    user_reg: number,
+    difference: number
 }

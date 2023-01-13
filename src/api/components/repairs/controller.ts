@@ -1,5 +1,5 @@
 import { IRepairs } from './../../../interfaces/Itables';
-import { Ipages, IWhereParams, IJoin } from 'interfaces/Ifunctions';
+import { Ipages, IWhereParams, IJoin, INewInsert } from 'interfaces/Ifunctions';
 import { IClientes, } from 'interfaces/Itables';
 import { EConcatWhere, EModeWhere, ESelectFunct, ETypesJoin } from '../../../enums/EfunctMysql';
 import { Tables, Columns } from '../../../enums/EtablesDB';
@@ -10,7 +10,7 @@ import { NextFunction } from 'express';
 export = (injectedStore: typeof StoreType) => {
     let store = injectedStore;
 
-    const list = async (dateFrom: string, dateTo: string, item?: string, franchiseId?: number, state?: number, page?: number, cantPerPage?: number) => {
+    const list = async (dateFrom: string, dateTo: string, item?: string, pvId?: number, state?: number, page?: number, cantPerPage?: number) => {
         let filter: IWhereParams | undefined = undefined;
         let filters: Array<IWhereParams> = [];
         filter = {
@@ -42,12 +42,12 @@ export = (injectedStore: typeof StoreType) => {
             };
             filters.push(filter);
         }
-        if (franchiseId) {
+        if (pvId) {
             filter = {
                 mode: EModeWhere.strict,
                 concat: EConcatWhere.none,
                 items: [
-                    { column: Columns.repairs.franchise_id, object: String(franchiseId) }
+                    { column: Columns.repairs.pv_id, object: String(pvId) }
                 ]
             };
             filters.push(filter);
@@ -65,9 +65,9 @@ export = (injectedStore: typeof StoreType) => {
         }
 
         const join: IJoin = {
-            table: Tables.FRANCHISE,
-            colJoin: Columns.franchise.id,
-            colOrigin: Columns.repairs.franchise_id,
+            table: Tables.PUNTOS_VENTA,
+            colJoin: Columns.ptosVta.id,
+            colOrigin: Columns.repairs.pv_id,
             type: ETypesJoin.left
         }
         let pages: Ipages;
@@ -78,7 +78,7 @@ export = (injectedStore: typeof StoreType) => {
                 order: Columns.clientes.id,
                 asc: false
             };
-            const data = await store.list(Tables.REPAIRS, [`${Tables.REPAIRS}.${Columns.repairs.id}`, Columns.repairs.date, Columns.repairs.client, Columns.repairs.state, Columns.repairs.hpc_cost, Columns.repairs.part_cost, Columns.repairs.service_cost, Columns.repairs.final_price, Columns.repairs.franchise_id, `${Tables.FRANCHISE}.${Columns.franchise.name}`], filters, undefined, pages, join);
+            const data = await store.list(Tables.REPAIRS, [`${Tables.REPAIRS}.${Columns.repairs.id}`, Columns.repairs.date, Columns.repairs.client, Columns.repairs.state, Columns.repairs.hpc_cost, Columns.repairs.part_cost, Columns.repairs.service_cost, Columns.repairs.final_price, Columns.repairs.pv_id, `${Tables.PUNTOS_VENTA}.${Columns.ptosVta.direccion}`, `${Tables.PUNTOS_VENTA}.${Columns.ptosVta.raz_soc}`, Columns.repairs.difference, Columns.repairs.detail], filters, undefined, pages, join);
             const cant = await store.list(Tables.REPAIRS, [`COUNT(${ESelectFunct.all}) AS COUNT`], filters, undefined, undefined, join);
             const pagesObj = await getPages(cant[0].COUNT, 10, Number(page));
             return {
@@ -94,7 +94,6 @@ export = (injectedStore: typeof StoreType) => {
     }
 
     const upsert = async (body: IRepairs, userId: number, next: NextFunction) => {
-        console.log('body :>> ', body);
         const repair: IRepairs = {
             detail: body.detail,
             client: body.client,
@@ -103,8 +102,9 @@ export = (injectedStore: typeof StoreType) => {
             hpc_cost: Number(body.part_cost) + Number(body.service_cost),
             final_price: body.final_price,
             state: body.state,
-            franchise_id: body.franchise_id,
-            user_reg: userId
+            pv_id: body.pv_id,
+            user_reg: userId,
+            difference: Number(body.final_price) - (Number(body.part_cost) + Number(body.service_cost))
         }
 
         try {
@@ -118,8 +118,22 @@ export = (injectedStore: typeof StoreType) => {
         }
     }
 
-    const remove = async (idCliente: number) => {
-        return 200
+    const customUpdate = async (object: object, repairId: number, next: NextFunction) => {
+        try {
+            return await store.update(Tables.REPAIRS, object, repairId);
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    const remove = async (idRepair: number) => {
+        const result: any = await store.remove(Tables.REPAIRS, { id: idRepair })
+        if (result.affectedRows > 0) {
+            return 200
+        } else {
+            return 500
+        }
     }
 
     const get = async (idCliente: number) => {
@@ -131,5 +145,6 @@ export = (injectedStore: typeof StoreType) => {
         upsert,
         remove,
         get,
+        customUpdate
     }
 }
