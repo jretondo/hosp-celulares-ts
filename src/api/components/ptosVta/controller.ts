@@ -12,8 +12,11 @@ import { IUser } from 'interfaces/Itables';
 export = (injectedStore: typeof StoreType) => {
     let store = injectedStore;
 
-    const list = async (page?: number, item?: string, cantPerPage?: number) => {
-        console.log('item :>> ', item);
+    const list = async (user: IUser, page?: number, item?: string, cantPerPage?: number) => {
+        console.log('user :>> ', user);
+
+        const ptoVta = user.pv
+
         let filter: IWhereParams | undefined = undefined;
         let filters: Array<IWhereParams> = [];
         if (item) {
@@ -25,6 +28,17 @@ export = (injectedStore: typeof StoreType) => {
                     { column: Columns.ptosVta.cuit, object: String(item) },
                     { column: Columns.ptosVta.nom_fantasia, object: String(item) },
                     { column: Columns.ptosVta.direccion, object: String(item) }
+                ]
+            };
+            filters.push(filter);
+        }
+
+        if (ptoVta > 0) {
+            filter = {
+                mode: EModeWhere.strict,
+                concat: EConcatWhere.none,
+                items: [
+                    { column: Columns.ptosVta.id, object: String(ptoVta) }
                 ]
             };
             filters.push(filter);
@@ -47,6 +61,7 @@ export = (injectedStore: typeof StoreType) => {
             };
         } else {
             const data = await store.list(Tables.PUNTOS_VENTA, [ESelectFunct.all], filters, undefined, undefined);
+            console.log('data :>> ', data);
             return {
                 data
             };

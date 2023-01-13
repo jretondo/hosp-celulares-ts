@@ -13,8 +13,9 @@ const list = (
     next: NextFunction
 ) => {
     Controller.list(
+        req.body.user,
         Number(req.params.page),
-        String(req.query.query),
+        undefined,
         Number(req.query.cantPerPage)
     )
         .then((lista: any) => {
@@ -33,7 +34,7 @@ const list2 = (
     res: Response,
     next: NextFunction
 ) => {
-    Controller.list()
+    Controller.list(req.body.user)
         .then((lista: any) => {
             success({
                 req,
@@ -100,7 +101,7 @@ const getUserPv = (
         .catch(next);
 };
 
-router.get("/:page", secure(EPermissions.ptosVta), list);
+router.get("/:page", secure(), list);
 router.get("/list", secure(EPermissions.ptosVta), list2);
 router.get("/", secure(EPermissions.ptosVta), list);
 router.get("/details/:id", secure(EPermissions.ptosVta), get);
