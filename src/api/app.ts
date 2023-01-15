@@ -23,6 +23,7 @@ import stock from './components/stock/network';
 import invoices from './components/invoices/network';
 import franchises from './components/franchises/network';
 import repairs from './components/repairs/network';
+import paymentsRepairs from './components/paymentsRepair/network';
 
 export class App {
     app: Application;
@@ -65,6 +66,7 @@ export class App {
         this.app.use("/api/invoices", invoices);
         this.app.use("/api/franchises", franchises);
         this.app.use("/api/repairs", repairs);
+        this.app.use("/api/paymentsRepairs", paymentsRepairs);
         this.app.use(errorTrhow);
     }
 

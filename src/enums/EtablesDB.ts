@@ -216,7 +216,9 @@ enum PaymentsRepairs {
     id = "id",
     date = "date",
     detail = "detail",
-    repair_id = "repair_id"
+    repair_id = "repair_id",
+    type = "type",
+    amount = "amount"
 }
 
 export enum MetodosPago {

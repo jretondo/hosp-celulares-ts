@@ -169,3 +169,12 @@ export interface IRepairs {
     user_reg: number,
     difference: number
 }
+
+export interface IPaymentsRepair {
+    id?: number,
+    date?: Date,
+    detail: string,
+    repair_id: number,
+    type: number,
+    amount: number
+}
