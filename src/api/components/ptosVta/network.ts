@@ -102,8 +102,8 @@ const getUserPv = (
 };
 
 router.get("/:page", secure(), list);
-router.get("/list", secure(EPermissions.ptosVta), list2);
-router.get("/", secure(EPermissions.ptosVta), list);
+router.get("/list", secure(), list2);
+router.get("/", secure(), list);
 router.get("/details/:id", secure(EPermissions.ptosVta), get);
 router.get("/userPv", secure(EPermissions.ptosVta), getUserPv);
 router.post("/", secure(EPermissions.ptosVta), uploadFile(staticFolders.certAfip, ["cert", "key"]), upsert);

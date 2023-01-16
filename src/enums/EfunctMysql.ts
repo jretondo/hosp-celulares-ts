@@ -31,8 +31,8 @@ export enum EPermissions {
     anularFact = 6,
     userAdmin = 8,
     stock = 9,
-    franquicias = 10,
-    reparaciones = 11,
+    franquicias = 11,
+    reparaciones = 10,
     repuestos = 12
 }
 
