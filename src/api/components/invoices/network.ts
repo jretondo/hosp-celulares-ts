@@ -124,10 +124,10 @@ const cajaList = (
 ) => {
     Controller.cajaList(
         false,
-        Number(req.query.userId),
-        Number(req.query.ptoVta),
         String(req.query.desde),
         String(req.query.hasta),
+        Number(req.query.ptoVta),
+        Number(req.query.userId),
         Number(req.params.page),
         Number(req.query.cantPerPage)
     )
@@ -149,10 +149,10 @@ const cajaListPDF = (
 ) => {
     Controller.cajaList(
         true,
-        Number(req.query.userId),
-        Number(req.query.ptoVta),
         String(req.query.desde),
-        String(req.query.hasta)
+        String(req.query.hasta),
+        Number(req.query.ptoVta),
+        Number(req.query.userId),
     )
         .then((dataFact) => {
             file(req, res, dataFact.filePath, 'application/pdf', dataFact.fileName, dataFact);

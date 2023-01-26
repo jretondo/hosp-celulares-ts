@@ -88,16 +88,32 @@ export = (injectedStore: typeof StoreType) => {
         }
     }
 
-    const cajaList = async (pdf: boolean, userId: number, ptoVtaId: number, desde: string, hasta: string, page?: number, cantPerPage?: number): Promise<any> => {
+    const cajaList = async (pdf: boolean, desde: string, hasta: string, ptoVtaId?: number, userId?: number, page?: number, cantPerPage?: number): Promise<any> => {
 
-        const filters: Array<IWhereParams> = [{
-            mode: EModeWhere.strict,
-            concat: EConcatWhere.and,
-            items: [
-                { column: Columns.facturas.user_id, object: String(userId) },
-                { column: Columns.facturas.pv_id, object: String(ptoVtaId) }
-            ]
-        }];
+        const filters: Array<IWhereParams> = []
+
+        if (userId) {
+            const filter = {
+                mode: EModeWhere.strict,
+                concat: EConcatWhere.none,
+                items: [
+                    { column: Columns.facturas.user_id, object: String(userId) }
+                ]
+            };
+            filters.push(filter);
+        }
+
+
+        if (ptoVtaId) {
+            const filter = {
+                mode: EModeWhere.strict,
+                concat: EConcatWhere.none,
+                items: [
+                    { column: Columns.facturas.pv_id, object: String(ptoVtaId) }
+                ]
+            };
+            filters.push(filter);
+        }
 
         const filter1: IWhereParams = {
             mode: EModeWhere.higherEqual,
@@ -155,7 +171,7 @@ export = (injectedStore: typeof StoreType) => {
             }
 
             if (pdf) {
-                const cajaList = await createListSellsPDF(userId, ptoVtaId, desde, hasta, totales, totales2, data)
+                const cajaList = await createListSellsPDF(userId || -1, ptoVtaId || 0, desde, hasta, totales, totales2, data)
                 return cajaList
             } else {
                 return {
