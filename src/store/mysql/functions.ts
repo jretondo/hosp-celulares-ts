@@ -251,7 +251,6 @@ export const selectContructor = (
         }
     }
 
-    console.log('query :>> ', query);
     return query;
 }
 
