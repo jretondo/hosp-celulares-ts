@@ -71,7 +71,7 @@ export = (injectedStore: typeof StoreType) => {
             `SUM(${Tables.DET_FACTURAS}.${Columns.detallesFact.total_prod} - ${Tables.DET_FACTURAS}.${Columns.detallesFact.total_costo}) AS totalGanancia`,
             `COUNT(${Tables.DET_FACTURAS}.${Columns.detallesFact.id}) AS cantidad`,
             `(${Tables.FACTURAS}.${Columns.facturas.fecha}) AS fecha`
-        ], filters, group, undefined, join);
+        ], filters, group, undefined, [join]);
         return {
             data
         };

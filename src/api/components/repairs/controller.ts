@@ -78,15 +78,15 @@ export = (injectedStore: typeof StoreType) => {
                 order: Columns.clientes.id,
                 asc: false
             };
-            const data = await store.list(Tables.REPAIRS, [`${Tables.REPAIRS}.${Columns.repairs.id}`, Columns.repairs.date, Columns.repairs.client, Columns.repairs.state, Columns.repairs.hpc_cost, Columns.repairs.part_cost, Columns.repairs.service_cost, Columns.repairs.final_price, Columns.repairs.pv_id, `${Tables.PUNTOS_VENTA}.${Columns.ptosVta.direccion}`, `${Tables.PUNTOS_VENTA}.${Columns.ptosVta.raz_soc}`, Columns.repairs.difference, Columns.repairs.detail], filters, undefined, pages, join);
-            const cant = await store.list(Tables.REPAIRS, [`COUNT(${ESelectFunct.all}) AS COUNT`], filters, undefined, undefined, join);
+            const data = await store.list(Tables.REPAIRS, [`${Tables.REPAIRS}.${Columns.repairs.id}`, Columns.repairs.date, Columns.repairs.client, Columns.repairs.state, Columns.repairs.hpc_cost, Columns.repairs.part_cost, Columns.repairs.service_cost, Columns.repairs.final_price, Columns.repairs.pv_id, `${Tables.PUNTOS_VENTA}.${Columns.ptosVta.direccion}`, `${Tables.PUNTOS_VENTA}.${Columns.ptosVta.raz_soc}`, Columns.repairs.difference, Columns.repairs.detail], filters, undefined, pages, [join]);
+            const cant = await store.list(Tables.REPAIRS, [`COUNT(${ESelectFunct.all}) AS COUNT`], filters, undefined, undefined, [join]);
             const pagesObj = await getPages(cant[0].COUNT, 10, Number(page));
             return {
                 data,
                 pagesObj
             };
         } else {
-            const data = await store.list(Tables.REPAIRS, [ESelectFunct.all], filters, undefined, undefined, join);
+            const data = await store.list(Tables.REPAIRS, [ESelectFunct.all], filters, undefined, undefined, [join]);
             return {
                 data
             };

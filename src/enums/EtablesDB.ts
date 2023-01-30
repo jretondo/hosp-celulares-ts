@@ -221,6 +221,30 @@ enum PaymentsRepairs {
     amount = "amount"
 }
 
+enum PartsAccesories {
+    id = "id",
+    created_time = "created_time",
+    last_updated = "last_updated",
+    color = "color",
+    model = "model",
+    observations = "observations",
+    type_id = "type_id",
+    pv_id = "pv_id",
+    state_id = "state_id",
+    user_id = "user_id"
+}
+
+enum PartAccesoryStates {
+    id = "id",
+    state = "state",
+    color = "color"
+}
+
+enum PartAccesoryTypes {
+    id = "id",
+    type = "type"
+}
+
 export enum MetodosPago {
     efectivo = 0,
     mercaPago = 1,
@@ -248,7 +272,10 @@ export enum Tables {
     FORMAS_PAGO = "formas_pago",
     FRANCHISE = "franchise",
     REPAIRS = "repairs",
-    PAYMENTS_REPAIRS = "payments_repairs"
+    PAYMENTS_REPAIRS = "payments_repairs",
+    PARTS_ACCESSORIES = "parts_accesories",
+    PART_ACCESSORY_STATES = "part_accesory_states",
+    PART_ACCESSORY_TYPES = "part_accesory_types"
 }
 
 export const Columns = {
@@ -269,5 +296,8 @@ export const Columns = {
     formasPago: FormasPago,
     franchise: Franchise,
     repairs: Repairs,
-    paymentsRepairs: PaymentsRepairs
+    paymentsRepairs: PaymentsRepairs,
+    partsAccessories: PartsAccesories,
+    partAccessoryStates: PartAccesoryStates,
+    partAccessoryTypes: PartAccesoryTypes
 }

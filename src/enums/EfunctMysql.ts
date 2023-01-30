@@ -33,7 +33,8 @@ export enum EPermissions {
     stock = 9,
     franquicias = 11,
     reparaciones = 10,
-    repuestos = 12
+    repuestos = 12,
+    parts = 13
 }
 
 export enum ETypesJoin {

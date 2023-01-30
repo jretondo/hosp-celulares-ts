@@ -178,3 +178,27 @@ export interface IPaymentsRepair {
     type: number,
     amount: number
 }
+
+export interface IPartsAccessories {
+    id?: number,
+    created_time?: Date,
+    last_updated?: Date,
+    color: string,
+    model: string,
+    observations: string,
+    pv_id: number,
+    state_id: number,
+    type_id: number,
+    user_id: number
+}
+
+export interface IPartAccessoryStates {
+    id?: number,
+    color: string,
+    state: string
+}
+
+export interface IPartAccessorytypes {
+    id?: number,
+    type: string
+}

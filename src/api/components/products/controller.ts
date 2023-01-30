@@ -65,7 +65,7 @@ export = (injectedStore: typeof StoreType) => {
                     order: Columns.prodImg.id_prod,
                     asc: true
                 };
-                const data = await store.list(Tables.PRODUCTS_PRINCIPAL, [ESelectFunct.all], filters, groupBy, pages, joinQuery);
+                const data = await store.list(Tables.PRODUCTS_PRINCIPAL, [ESelectFunct.all], filters, groupBy, pages, [joinQuery]);
                 const cant = await store.list(Tables.PRODUCTS_PRINCIPAL, [`COUNT(${ESelectFunct.all}) AS COUNT`], filters);
                 const pagesObj = await getPages(cant[0].COUNT, 10, Number(page));
                 return {
@@ -73,7 +73,7 @@ export = (injectedStore: typeof StoreType) => {
                     pagesObj
                 };
             } else {
-                const data = await store.list(Tables.PRODUCTS_PRINCIPAL, [ESelectFunct.all], filters, undefined, undefined, joinQuery);
+                const data = await store.list(Tables.PRODUCTS_PRINCIPAL, [ESelectFunct.all], filters, undefined, undefined, [joinQuery]);
                 return {
                     data
                 };
