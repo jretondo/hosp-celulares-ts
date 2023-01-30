@@ -53,7 +53,8 @@ export = (injectedStore: typeof StoreType) => {
             filters.push(filter);
         }
 
-        if (state) {
+        const state2 = String(state)
+        if (state2 !== "NaN") {
             filter = {
                 mode: EModeWhere.strict,
                 concat: EConcatWhere.none,
@@ -82,6 +83,7 @@ export = (injectedStore: typeof StoreType) => {
             const cant = await store.list(Tables.REPAIRS, [`COUNT(${ESelectFunct.all}) AS COUNT`], filters, undefined, undefined, [join]);
             const pagesObj = await getPages(cant[0].COUNT, 10, Number(page));
             const summarizes = await store.list(Tables.REPAIRS, [`SUM(${Columns.repairs.hpc_cost}) AS total_hpc_cost`, `SUM(${Columns.repairs.final_price}) AS total_final_price`, `SUM(${Columns.repairs.difference}) AS total_difference`], filters, undefined, undefined, [join]);
+
             return {
                 data,
                 pagesObj,
