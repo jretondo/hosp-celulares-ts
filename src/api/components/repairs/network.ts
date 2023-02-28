@@ -35,7 +35,7 @@ const listPagination = (
         String(req.query.toDate),
         String(req.query.search),
         Number(req.query.franchiseId),
-        Number(req.query.state),
+        req.query.state === "" ? undefined : Number(req.query.state),
         Number(req.params.page),
         Number(req.query.cantPerPage)
     ).then((lista: any) => {

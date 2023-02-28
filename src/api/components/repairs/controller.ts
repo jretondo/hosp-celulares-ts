@@ -52,9 +52,8 @@ export = (injectedStore: typeof StoreType) => {
             };
             filters.push(filter);
         }
-
         const state2 = String(state)
-        if (state2 !== "NaN") {
+        if (state2 !== "undefined") {
             filter = {
                 mode: EModeWhere.strict,
                 concat: EConcatWhere.none,
@@ -69,8 +68,9 @@ export = (injectedStore: typeof StoreType) => {
             table: Tables.PUNTOS_VENTA,
             colJoin: Columns.ptosVta.id,
             colOrigin: Columns.repairs.pv_id,
-            type: ETypesJoin.left
+            type: ETypesJoin.none
         }
+
         let pages: Ipages;
         if (page) {
             pages = {
@@ -80,6 +80,7 @@ export = (injectedStore: typeof StoreType) => {
                 asc: false
             };
             const data = await store.list(Tables.REPAIRS, [`${Tables.REPAIRS}.${Columns.repairs.id}`, Columns.repairs.date, Columns.repairs.client, Columns.repairs.state, Columns.repairs.hpc_cost, Columns.repairs.part_cost, Columns.repairs.service_cost, Columns.repairs.final_price, Columns.repairs.pv_id, `${Tables.PUNTOS_VENTA}.${Columns.ptosVta.direccion}`, `${Tables.PUNTOS_VENTA}.${Columns.ptosVta.raz_soc}`, Columns.repairs.difference, Columns.repairs.detail], filters, undefined, pages, [join]);
+
             const cant = await store.list(Tables.REPAIRS, [`COUNT(${ESelectFunct.all}) AS COUNT`], filters, undefined, undefined, [join]);
             const pagesObj = await getPages(cant[0].COUNT, 10, Number(page));
             const summarizes = await store.list(Tables.REPAIRS, [`SUM(${Columns.repairs.hpc_cost}) AS total_hpc_cost`, `SUM(${Columns.repairs.final_price}) AS total_final_price`, `SUM(${Columns.repairs.difference}) AS total_difference`], filters, undefined, undefined, [join]);
