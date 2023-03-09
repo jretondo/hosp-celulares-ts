@@ -15,12 +15,13 @@ export = (injectedStore: typeof StoreType) => {
     const products = async (fromDate: string, toDate: string, pvId?: number, idProd?: number) => {
         let filter: IWhereParams | undefined = undefined;
         let filters: Array<IWhereParams> = [];
+        console.log('pvId :>> ', pvId);
         if (pvId) {
             filter = {
                 mode: EModeWhere.strict,
                 concat: EConcatWhere.none,
                 items: [
-                    { column: `${Tables.FACTURAS}.${Columns.facturas.pv_id}`, object: String(pvId) },
+                    { column: `${Tables.FACTURAS}.${Columns.facturas.pv}`, object: String(pvId) },
                 ]
             };
             filters.push(filter);
@@ -59,7 +60,7 @@ export = (injectedStore: typeof StoreType) => {
             table: Tables.DET_FACTURAS,
             colJoin: Columns.detallesFact.fact_id,
             colOrigin: Columns.facturas.id,
-            type: ETypesJoin.none
+            type: ETypesJoin.left
         }
 
         const group: Array<string> = [`${Tables.FACTURAS}.${Columns.facturas.fecha}`]
