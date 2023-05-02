@@ -253,6 +253,7 @@ export const selectContructor = (
             query = ` ${query} ${strOrder} `;
         }
     }
+
     return query;
 }
 

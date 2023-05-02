@@ -66,7 +66,9 @@ export = (injectedStore: typeof StoreType) => {
             apellido: body.apellido,
             email: body.email,
             usuario: body.usuario,
-            pv: body.pv
+            pv: body.pv,
+            cash_date: null,
+            cash_found: 0
         }
 
         if (body.id) {

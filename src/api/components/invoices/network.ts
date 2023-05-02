@@ -205,6 +205,47 @@ const correctorNC = (
     }).catch(next)
 }
 
+const getCashFound = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    Controller.getCashFound(req.body.user.id).then(data => {
+        success({ req, res, message: data });
+    }).catch(next)
+}
+
+const newCashFound = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    Controller.putCashFound(req.body.user.id, req.body.cashFound, req.body.cashDate).then(data => {
+        success({ req, res });
+    }).catch(next)
+}
+
+const newCashWithdrawal = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    Controller.newCashWithdrawal(req.body.user.id, req.body.pvId, req.body.amount).then(() => {
+        success({ req, res, status: 201 });
+    }).catch(next)
+}
+
+const getTotalCashWithdrawal = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    Controller.getTotalCashWithdrawal(String(req.query.fromDate), String(req.query.toDate), req.body.user.id, Number(req.query.pvId)).then((data) => {
+        success({ req, res, message: data });
+    }).catch(next)
+}
+
+
 router.get("/details/:id", secure(EPermissions.ventas), get)
     .get("/cajaList/:page", secure(EPermissions.ventas), cajaList)
     .get("/cajaListPDF", secure(EPermissions.ventas), cajaListPDF)
@@ -213,10 +254,14 @@ router.get("/details/:id", secure(EPermissions.ventas), get)
     .get("/dummy", secure(EPermissions.ventas), getDummy)
     .get("/timeout", secure(EPermissions.ventas), timeoutProuf)
     .get("/afipData", secure(EPermissions.ventas), getFiscalDataInvoice)
-    .get("/:page", secure(EPermissions.ventas), list)
+    .get("/cashFound", secure(EPermissions.ventas), getCashFound)
+    .put("/cashFound", secure(EPermissions.ventas), newCashFound)
+    .get("/cashWithdrawal", secure(EPermissions.ventas), getTotalCashWithdrawal)
+    .post("/cashWithdrawal", secure(EPermissions.ventas), newCashWithdrawal)
     .post("/notaCred", secure(EPermissions.ventas), devFactMiddle(), fiscalMiddle(), invoicePDFMiddle(), sendFactMiddle(), newInvoice)
-    .post("/", secure(EPermissions.ventas), factuMiddel(), fiscalMiddle(), invoicePDFMiddle(), sendFactMiddle(), newInvoice)
-    .delete("/:id", secure(EPermissions.ventas), remove)
     .put("/paytype/:id", secure(EPermissions.ventas), changePayType)
+    .delete("/:id", secure(EPermissions.ventas), remove)
+    .get("/:page", secure(EPermissions.ventas), list)
+    .post("/", secure(EPermissions.ventas), factuMiddel(), fiscalMiddle(), invoicePDFMiddle(), sendFactMiddle(), newInvoice)
 
 export = router;

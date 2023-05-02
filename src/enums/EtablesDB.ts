@@ -4,7 +4,17 @@ enum AdminCol {
     apellido = 'apellido',
     email = 'email',
     usuario = 'usuario',
-    pv = 'pv'
+    pv = 'pv',
+    cash_date = "cash_date",
+    cash_found = "cash_found"
+}
+
+enum CashWithdrawal {
+    id = "id",
+    date_time = "date_time",
+    amount = "amount",
+    admin_id = "admin_id",
+    pv_id = "pv_id"
 }
 
 enum AuthAdmCol {
@@ -275,7 +285,8 @@ export enum Tables {
     PAYMENTS_REPAIRS = "payments_repairs",
     PARTS_ACCESSORIES = "parts_accesories",
     PART_ACCESSORY_STATES = "part_accesory_states",
-    PART_ACCESSORY_TYPES = "part_accesory_types"
+    PART_ACCESSORY_TYPES = "part_accesory_types",
+    CASH_WITHDRAWAL = "cash_withdrawal"
 }
 
 export const Columns = {
@@ -299,5 +310,6 @@ export const Columns = {
     paymentsRepairs: PaymentsRepairs,
     partsAccessories: PartsAccesories,
     partAccessoryStates: PartAccesoryStates,
-    partAccessoryTypes: PartAccesoryTypes
+    partAccessoryTypes: PartAccesoryTypes,
+    cashWithdrawal: CashWithdrawal
 }

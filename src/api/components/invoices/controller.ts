@@ -1,7 +1,8 @@
+import { INewInsert } from './../../../interfaces/Ifunctions';
 import { ETypesJoin } from '../../../enums/EfunctMysql';
 import { MetodosPago } from './../../../enums/EtablesDB';
 import { sendAvisoFact } from './../../../utils/sendEmails/sendAvisoFact';
-import { IFormasPago, IMovCtaCte } from './../../../interfaces/Itables';
+import { IFormasPago, IMovCtaCte, ICashWithdrawal } from './../../../interfaces/Itables';
 import { createListSellsPDF } from './../../../utils/facturacion/lists/createListSellsPDF';
 import { EConcatWhere, EModeWhere, ESelectFunct } from '../../../enums/EfunctMysql';
 import { Tables, Columns } from '../../../enums/EtablesDB';
@@ -151,6 +152,7 @@ export = (injectedStore: typeof StoreType) => {
             };
             const totales = await store.list(Tables.FACTURAS, [`SUM(${Columns.facturas.total_fact}) AS SUMA`, Columns.facturas.forma_pago], filters, [Columns.facturas.forma_pago], undefined);
             const totales2 = await store.list(Tables.FACTURAS, [`SUM(${Columns.formasPago.importe}) AS SUMA`, Columns.formasPago.tipo], filters, [Columns.formasPago.tipo], undefined, [joinQuery]);
+            const retiroData = await getTotalCashWithdrawal(desde, hasta, userId || 0, ptoVtaId || 0)
             const data = await store.list(Tables.FACTURAS, [ESelectFunct.all], filters, undefined, pages, undefined, { columns: [Columns.facturas.fecha], asc: false });
             const cant = await store.list(Tables.FACTURAS, [`COUNT(${ESelectFunct.all}) AS COUNT`], filters, undefined, undefined);
             const pagesObj = await getPages(cant[0].COUNT, 10, Number(page));
@@ -158,7 +160,8 @@ export = (injectedStore: typeof StoreType) => {
                 data,
                 pagesObj,
                 totales,
-                totales2
+                totales2,
+                retiroData
             };
         } else {
             const totales = await store.list(Tables.FACTURAS, [`SUM(${Columns.facturas.total_fact}) AS SUMA`, Columns.facturas.forma_pago], filters, [Columns.facturas.forma_pago], undefined, [joinQuery]);
@@ -547,6 +550,69 @@ export = (injectedStore: typeof StoreType) => {
         }
     }
 
+    const getCashFound = async (userId: number) => {
+        return await store.get(Tables.ADMIN, userId);
+    }
+
+    const putCashFound = async (userId: number, cashFound: number, cashDate: string) => {
+        const newFoundData = {
+            cash_date: cashDate,
+            cash_found: cashFound
+        }
+        const result: INewInsert = await store.update(Tables.ADMIN, newFoundData, userId)
+        if (result.affectedRows > 0) {
+            return 200
+        }
+        throw Error("Algo salió mal")
+    }
+
+    const newCashWithdrawal = async (userId: number, pvId: number, amount: number) => {
+
+        const newwithdrawal: ICashWithdrawal = {
+            admin_id: userId,
+            pv_id: pvId,
+            amount: amount
+        }
+
+        const result: INewInsert = await store.insert(Tables.CASH_WITHDRAWAL, newwithdrawal)
+        if (result.affectedRows > 0) {
+            return 200
+        }
+        throw Error("Algo salió mal")
+    }
+
+    const getTotalCashWithdrawal = async (fromdate: string, toDate: string, userId: number, pvId: number) => {
+        const filters: Array<IWhereParams> = [{
+            mode: EModeWhere.strict,
+            concat: EConcatWhere.and,
+            items: [
+                { column: Columns.cashWithdrawal.admin_id, object: String(userId) },
+                { column: Columns.cashWithdrawal.pv_id, object: String(pvId) },
+            ]
+        }, {
+            mode: EModeWhere.higherEqual,
+            concat: EConcatWhere.and,
+            items: [
+                { column: Columns.cashWithdrawal.date_time, object: String(fromdate + " 00:00:00") },
+            ]
+        }, {
+            mode: EModeWhere.lessEqual,
+            concat: EConcatWhere.and,
+            items: [
+                { column: Columns.cashWithdrawal.date_time, object: String(toDate + " 23:59:99") }
+            ]
+        }];
+
+        const total: any = await store.list(Tables.CASH_WITHDRAWAL, [`SUM(${Columns.cashWithdrawal.amount}) as TOTAL`], filters);
+        const data = await store.list(Tables.CASH_WITHDRAWAL, [`*`], filters);
+
+        return {
+            data,
+            total: total[0].TOTAL
+        };
+
+    }
+
     return {
         lastInvoice,
         list,
@@ -561,6 +627,10 @@ export = (injectedStore: typeof StoreType) => {
         dummyServers,
         correctorNC,
         newMovCtaCte,
-        getFormasPago
+        getFormasPago,
+        getCashFound,
+        putCashFound,
+        newCashWithdrawal,
+        getTotalCashWithdrawal
     }
 }

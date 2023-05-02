@@ -13,7 +13,6 @@ export = (injectedStore: typeof StoreType) => {
     let store = injectedStore;
 
     const list = async (user: IUser, page?: number, item?: string, cantPerPage?: number) => {
-        console.log('user :>> ', user);
 
         const ptoVta = user.pv
 
@@ -61,7 +60,6 @@ export = (injectedStore: typeof StoreType) => {
             };
         } else {
             const data = await store.list(Tables.PUNTOS_VENTA, [ESelectFunct.all], filters, undefined, undefined);
-            console.log('data :>> ', data);
             return {
                 data
             };

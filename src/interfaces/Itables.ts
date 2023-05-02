@@ -11,7 +11,9 @@ export interface IUser {
     apellido: string
     email: string,
     usuario: string,
-    pv: number
+    pv: number,
+    cash_date: Date | null,
+    cash_found: number
 }
 export interface IUserPermission {
     id?: number,
@@ -201,4 +203,12 @@ export interface IPartAccessoryStates {
 export interface IPartAccessorytypes {
     id?: number,
     type: string
+}
+
+export interface ICashWithdrawal {
+    id?: number,
+    date_time?: Date,
+    amount: number,
+    admin_id: number,
+    pv_id: number
 }

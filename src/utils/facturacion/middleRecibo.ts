@@ -35,8 +35,6 @@ const paymentMiddle = () => {
             const letra = "REC"
             const getHighterNum: Array<{ last: number }> = await store.list(Tables.FACTURAS, [`MAX(${Columns.facturas.cbte}) as last`], filters)
             const lastNumber = getHighterNum[0].last
-            console.log('lastNumber :>> ', lastNumber);
-            console.log('getHighterNum :>> ', getHighterNum);
             let cbte = 0
             if (lastNumber > 0) {
                 cbte = lastNumber
