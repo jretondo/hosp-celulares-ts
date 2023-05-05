@@ -566,12 +566,13 @@ export = (injectedStore: typeof StoreType) => {
         throw Error("Algo salió mal")
     }
 
-    const newCashWithdrawal = async (userId: number, pvId: number, amount: number) => {
+    const newCashWithdrawal = async (userId: number, pvId: number, amount: number, detail: string) => {
 
         const newwithdrawal: ICashWithdrawal = {
             admin_id: userId,
             pv_id: pvId,
-            amount: amount
+            amount: amount,
+            detail: detail
         }
 
         const result: INewInsert = await store.insert(Tables.CASH_WITHDRAWAL, newwithdrawal)

@@ -210,5 +210,6 @@ export interface ICashWithdrawal {
     date_time?: Date,
     amount: number,
     admin_id: number,
-    pv_id: number
+    pv_id: number,
+    detail: string
 }

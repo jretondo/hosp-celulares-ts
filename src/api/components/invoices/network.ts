@@ -230,7 +230,7 @@ const newCashWithdrawal = (
     res: Response,
     next: NextFunction
 ) => {
-    Controller.newCashWithdrawal(req.body.user.id, req.body.pvId, req.body.amount).then(() => {
+    Controller.newCashWithdrawal(req.body.user.id, req.body.pvId, req.body.amount, req.body.detail).then(() => {
         success({ req, res, status: 201 });
     }).catch(next)
 }

@@ -14,7 +14,8 @@ enum CashWithdrawal {
     date_time = "date_time",
     amount = "amount",
     admin_id = "admin_id",
-    pv_id = "pv_id"
+    pv_id = "pv_id",
+    detail = "detail"
 }
 
 enum AuthAdmCol {
