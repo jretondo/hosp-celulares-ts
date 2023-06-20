@@ -213,3 +213,9 @@ export interface ICashWithdrawal {
     pv_id: number,
     detail: string
 }
+
+export interface IPuntosVentasUsuarios {
+    id?: number,
+    usuario_id: number,
+    pv_id: number
+}

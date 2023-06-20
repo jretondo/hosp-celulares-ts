@@ -101,11 +101,11 @@ const getUserPv = (
         .catch(next);
 };
 
-router.get("/:page", secure(), list);
 router.get("/list", secure(), list2);
-router.get("/", secure(), list);
 router.get("/details/:id", secure(EPermissions.ptosVta), get);
-router.get("/userPv", secure(EPermissions.ptosVta), getUserPv);
+router.get("/userPv", secure(), getUserPv);
+router.get("/:page", secure(), list);
+router.get("/", secure(), list);
 router.post("/", secure(EPermissions.ptosVta), uploadFile(staticFolders.certAfip, ["cert", "key"]), upsert);
 router.put("/", secure(EPermissions.ptosVta), uploadFile(staticFolders.certAfip, ["cert", "key"]), upsert);
 router.delete("/:id", secure(EPermissions.ptosVta), remove);

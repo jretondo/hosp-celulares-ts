@@ -99,10 +99,32 @@ const myDataUser = (
         .catch(next)
 }
 
+const addPvListUser = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    Controller.addPvUser(Number(req.body.userId), req.body.pvList).then(() => {
+        success({ req, res, status: 201 });
+    }).catch(next);
+}
+
+const getPvUser = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    Controller.getPvUser(Number(req.query.userId)).then((result) => {
+        success({ req, res, message: result });
+    }).catch(next)
+}
+
 router.get("/details/:id", secure(EPermissions.userAdmin), get);
 router.get("/mydata", secure(), myDataUser)
+router.get("/pvUser", secure(EPermissions.userAdmin), getPvUser)
 router.get("/:page", secure(EPermissions.userAdmin), listPagination);
 router.get("/", secure(EPermissions.userAdmin), list);
+router.post("/pvUser", secure(EPermissions.userAdmin), addPvListUser)
 router.post("/", upsert);
 router.put("/", secure(EPermissions.userAdmin), upsert);
 router.delete("/:id", secure(EPermissions.userAdmin), remove);

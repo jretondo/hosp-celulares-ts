@@ -256,6 +256,12 @@ enum PartAccesoryTypes {
     type = "type"
 }
 
+enum PuntosVentaUsuarios {
+    id = "id",
+    usuario_id = "usuario_id",
+    pv_id = "pv_id"
+}
+
 export enum MetodosPago {
     efectivo = 0,
     mercaPago = 1,
@@ -287,7 +293,8 @@ export enum Tables {
     PARTS_ACCESSORIES = "parts_accesories",
     PART_ACCESSORY_STATES = "part_accesory_states",
     PART_ACCESSORY_TYPES = "part_accesory_types",
-    CASH_WITHDRAWAL = "cash_withdrawal"
+    CASH_WITHDRAWAL = "cash_withdrawal",
+    PUNTOS_VENTA_USUARIO = "puntos_venta_usuarios"
 }
 
 export const Columns = {
@@ -312,5 +319,6 @@ export const Columns = {
     partsAccessories: PartsAccesories,
     partAccessoryStates: PartAccesoryStates,
     partAccessoryTypes: PartAccesoryTypes,
-    cashWithdrawal: CashWithdrawal
+    cashWithdrawal: CashWithdrawal,
+    puntosVentaUsuarios: PuntosVentaUsuarios
 }

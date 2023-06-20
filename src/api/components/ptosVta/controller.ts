@@ -1,20 +1,19 @@
-import { EConcatWhere, EModeWhere, ESelectFunct } from '../../../enums/EfunctMysql';
+import { EConcatWhere, EModeWhere, ESelectFunct, ETypesJoin } from '../../../enums/EfunctMysql';
 import { Tables, Columns } from '../../../enums/EtablesDB';
 import StoreType from '../../../store/mysql';
 import getPages from '../../../utils/getPages';
 import path from 'path';
 import fs from 'fs';
 import { staticFolders } from '../../../enums/EStaticFiles';
-import { Ipages, IWhereParams } from 'interfaces/Ifunctions';
+import { IJoin, Ipages, IWhereParams } from 'interfaces/Ifunctions';
 import { INewPV } from 'interfaces/Irequests';
 import { IUser } from 'interfaces/Itables';
+import UserController from '../user';
 
 export = (injectedStore: typeof StoreType) => {
     let store = injectedStore;
 
     const list = async (user: IUser, page?: number, item?: string, cantPerPage?: number) => {
-
-        const ptoVta = user.pv
 
         let filter: IWhereParams | undefined = undefined;
         let filters: Array<IWhereParams> = [];
@@ -32,16 +31,23 @@ export = (injectedStore: typeof StoreType) => {
             filters.push(filter);
         }
 
-        if (ptoVta > 0) {
+        if (user.pv !== null) {
             filter = {
                 mode: EModeWhere.strict,
                 concat: EConcatWhere.none,
                 items: [
-                    { column: Columns.ptosVta.id, object: String(ptoVta) }
+                    { column: Columns.puntosVentaUsuarios.usuario_id, object: String(user.id || 0) }
                 ]
             };
             filters.push(filter);
         }
+
+        const joinQuery: IJoin = {
+            table: Tables.PUNTOS_VENTA,
+            colJoin: Columns.ptosVta.id,
+            colOrigin: Columns.puntosVentaUsuarios.pv_id,
+            type: ETypesJoin.none
+        };
 
         let pages: Ipages;
         if (page) {
@@ -51,15 +57,15 @@ export = (injectedStore: typeof StoreType) => {
                 order: Columns.admin.id,
                 asc: true
             };
-            const data = await store.list(Tables.PUNTOS_VENTA, [ESelectFunct.all], filters, undefined, pages);
-            const cant = await store.list(Tables.PUNTOS_VENTA, [`COUNT(${ESelectFunct.all}) AS COUNT`], filters, undefined, undefined);
+            const data = await store.list(Tables.PUNTOS_VENTA_USUARIO, [ESelectFunct.all], filters, undefined, pages, [joinQuery]);
+            const cant = await store.list(Tables.PUNTOS_VENTA_USUARIO, [`COUNT(${ESelectFunct.all}) AS COUNT`], filters, undefined, undefined, [joinQuery]);
             const pagesObj = await getPages(cant[0].COUNT, 10, Number(page));
             return {
                 data,
                 pagesObj
             };
         } else {
-            const data = await store.list(Tables.PUNTOS_VENTA, [ESelectFunct.all], filters, undefined, undefined);
+            const data = await store.list(Tables.PUNTOS_VENTA_USUARIO, [ESelectFunct.all], filters, undefined, undefined, [joinQuery]);
             return {
                 data
             };
@@ -118,7 +124,12 @@ export = (injectedStore: typeof StoreType) => {
     }
 
     const getUserPv = async (user: IUser) => {
-        return await store.get(Tables.PUNTOS_VENTA, user.pv)
+        if (user.pv === null) {
+            return list(user);
+        } else {
+            return { data: await UserController.getPvUser(user.id || 0) };
+        }
+
     }
 
     return {
