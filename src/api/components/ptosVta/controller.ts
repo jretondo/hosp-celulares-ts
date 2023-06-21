@@ -57,15 +57,15 @@ export = (injectedStore: typeof StoreType) => {
                 order: Columns.admin.id,
                 asc: true
             };
-            const data = await store.list(Tables.PUNTOS_VENTA_USUARIO, [ESelectFunct.all], filters, undefined, pages, [joinQuery]);
-            const cant = await store.list(Tables.PUNTOS_VENTA_USUARIO, [`COUNT(${ESelectFunct.all}) AS COUNT`], filters, undefined, undefined, [joinQuery]);
+            const data = await store.list(Tables.PUNTOS_VENTA_USUARIO, [ESelectFunct.all], filters, [Columns.puntosVentaUsuarios.pv_id], pages, [joinQuery]);
+            const cant = await store.list(Tables.PUNTOS_VENTA_USUARIO, [`COUNT(${ESelectFunct.all}) AS COUNT`], filters, [Columns.puntosVentaUsuarios.pv_id], undefined, [joinQuery]);
             const pagesObj = await getPages(cant[0].COUNT, 10, Number(page));
             return {
                 data,
                 pagesObj
             };
         } else {
-            const data = await store.list(Tables.PUNTOS_VENTA_USUARIO, [ESelectFunct.all], filters, undefined, undefined, [joinQuery]);
+            const data = await store.list(Tables.PUNTOS_VENTA_USUARIO, [ESelectFunct.all], filters, [Columns.puntosVentaUsuarios.pv_id], undefined, [joinQuery]);
             return {
                 data
             };
