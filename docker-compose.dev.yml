@@ -2,14 +2,14 @@ version: '3.8'
 
 services:
   hospital-celulares-app:
-    build:
-      context: .
-      dockerfile: dockerfile.dev
+    image: node-point-sell-dev:1.0
     working_dir: /app
     volumes:
-      - ./src:/app/src
+      - /home/jretondo/proyectos/hospital-celulares/backend_v1:/app
       - /app/node_modules
+      - ./public:/app/public
     ports:
       - '3014:3014'
     env_file:
       - .env
+    command: npm run build && npm run start
